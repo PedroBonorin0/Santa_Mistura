@@ -6,6 +6,7 @@ const db = require('./models/');
 const productRoutes = require('./routes/productRouter');
 const clientRoutes = require('./routes/clientRouter');
 const orderRoutes = require('./routes/orderRouter');
+const classRoutes = require('./routes/classRouter');
 
 var corsOptions = {
   origin: 'http://localhost:8081'
@@ -16,6 +17,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 db.sequelize.sync();
+// db.sequelize.sync({ alter: true });
+// db.sequelize.sync({ force: true });
 
 app.get('/', (req, res) => {
   res.send('Home');
@@ -24,6 +27,7 @@ app.get('/', (req, res) => {
 app.use(productRoutes);
 app.use(clientRoutes);
 app.use(orderRoutes);
+app.use(classRoutes);
 
 app.listen(3031, () => {
   console.log();

@@ -47,8 +47,8 @@ router.post('/orders', async (req, res) => {
 
       order.addProducts(productsInOrder);
 
-      return res.send(order);
-    })
+      return payed? res.send(order) : client.update({ balance: (client.balance - finalPrice )});
+    }).then(() => res.send(order))
     .catch(err => {
       res.status(400);
       res.send(err);
@@ -90,13 +90,28 @@ router.put('/orders/:id', async (req, res) => {
 
   for(const prod of req.body.productsIds) {
     await models.products.findByPk(prod)
-      .then(data => productsInOrder.push(data))
+      .then(data => {
+        productsInOrder.push(data);
+      })
       .catch(err => res.send(err));
   }
 
   let finalPrice = 0;
   for(const product of productsInOrder)
     finalPrice += Number(product.price);
+
+  let payedStatus;
+
+  await models.orders.findByPk(req.params.id)
+    .then(data => {
+      payedStatus = data.payed;
+      return;
+    });
+
+  console.log('==================status=================');
+  console.log(payedStatus);
+  console.log('==================payed=================');
+  console.log(req.body.payed);
 
   await models.orders.update({
     clientId: req.body.clientId,
@@ -111,10 +126,15 @@ router.put('/orders/:id', async (req, res) => {
     .then(async (data) => {
       if(!data === 1) {
         res.status(400);
-        res.send('Order not found!');
-        return;
+        return res.send('Order not found!');
       }
-      res.send('Order updated!');
+      return (req.body.payed == payedStatus)? res.send('Order Updated') :
+        await models.clients.findByPk(req.body.clientId)
+          .then(async (data) => {
+            let newBalance = Number(data.balance) + finalPrice;
+            await data.update({ balance: newBalance })
+              .then(() => res.send('Order and Client\'s balance Updated'));
+          });
     })
     .catch(err => {
       res.status(400);

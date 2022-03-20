@@ -24,10 +24,6 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.DECIMAL(5, 2),
       default: 0
     },
-    className: {
-      type: DataTypes.STRING,
-      default: '-'
-    },
   }, {
     timestamps: false
   });

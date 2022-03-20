@@ -3,14 +3,15 @@ const models = require('../models');
 
 // CREATE
 router.post('/clients', async (req, res) => {
-  const name = req.body.name;
-  const isStudent = req.body.isStudent;
+  const { name, isStudent, classId } = req.body;
 
-  if(!name || isStudent === null) {
+  if(!name || isStudent === null || !classId) {
     res.status(400);
     res.send('Missing required field(s)');
     return;
   }
+
+  let clientClass, newClient;
 
   await models.clients.create({
     name: req.body.name,
@@ -19,9 +20,17 @@ router.post('/clients', async (req, res) => {
     phone: req.body.phone,
     parentPhone: req.body.parentPhone,
     balance: req.body.balance,
-    className: req.body.className,
   })
-    .then(data => res.json(data))
+    .then(data => {
+      newClient = data;
+
+      return isStudent? models.classes.findByPk(classId) : res.send(data);
+    }).then(data => {
+      clientClass = data;
+
+      newClient.setClass(clientClass);
+      return res.send(newClient);
+    })
     .catch(err => {
       res.status(400);
       res.send(err);
@@ -30,7 +39,7 @@ router.post('/clients', async (req, res) => {
 
 // FIND ALL
 router.get('/clients', async (req, res) => {
-  await models.clients.findAll()
+  await models.clients.findAll({ include: models.classes })
     .then(data => res.json(data))
     .catch(err => {
       res.status(400);
@@ -42,7 +51,7 @@ router.get('/clients', async (req, res) => {
 router.get('/clients/:id', async (req, res) => {
   const id = req.params.id;
 
-  await models.clients.findByPk(id)
+  await models.clients.findByPk(id, { include: models.classes })
     .then(data => {
       if(data) res.json(data);
       else {
@@ -66,7 +75,7 @@ router.put('/clients/:id', async (req, res) => {
     phone: req.body.phone,
     parentPhone: req.body.parentPhone,
     balance: req.body.balance,
-    className: req.body.className,
+    classId: req.body.classId,
   }, {
     where: {
       id: req.params.id
