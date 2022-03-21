@@ -3,10 +3,13 @@ const app = express();
 const cors = require('cors');
 const db = require('./models/');
 
+require('dotenv').config();
+
 const productRoutes = require('./routes/productRouter');
 const clientRoutes = require('./routes/clientRouter');
 const orderRoutes = require('./routes/orderRouter');
 const classRoutes = require('./routes/classRouter');
+const userRoutes = require('./routes/userRouter');
 
 var corsOptions = {
   origin: 'http://localhost:8081'
@@ -24,14 +27,16 @@ app.get('/', (req, res) => {
   res.send('Home');
 });
 
+
 app.use(productRoutes);
 app.use(clientRoutes);
 app.use(orderRoutes);
 app.use(classRoutes);
+app.use(userRoutes);
 
-app.listen(3031, () => {
+app.listen(process.env.PORT || 3031, () => {
   console.log();
-  console.log('Running on http://localhost:3031');
+  console.log(`Running on http://localhost:${process.env.PORT || 3031}`);
   console.log();
 });
 

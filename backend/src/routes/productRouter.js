@@ -3,8 +3,7 @@ const models = require('../models');
 
 // CREATE
 router.post('/products', async (req, res) => {
-  const name = req.body.name;
-  const price = req.body.price;
+  const { name, price } = req.body;
 
   if(!name || !price) {
     res.status(400);

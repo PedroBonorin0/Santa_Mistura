@@ -13,6 +13,7 @@ db.products = require('./productModel')(sequelize, Sequelize);
 db.clients = require('./clientModel')(sequelize, Sequelize);
 db.orders = require('./orderModel')(sequelize, Sequelize);
 db.classes = require('./classModel')(sequelize, Sequelize);
+db.users = require('./userModel')(sequelize, Sequelize);
 
 // ------------------------RELATIONS------------------------
 
