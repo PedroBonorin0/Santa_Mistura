@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const models = require('../models');
 
+const authToken = require('../middlewares/authentication');
+
 // CREATE
-router.post('/classes', async (req, res) => {
+router.post('/classes', authToken, async (req, res) => {
   const { name, teacherName } = req.body;
 
   if(!name || !teacherName) {
@@ -23,7 +25,7 @@ router.post('/classes', async (req, res) => {
 });
 
 // FIND ALL
-router.get('/classes', async (req, res) => {
+router.get('/classes', authToken, async (req, res) => {
   await models.classes.findAll()
     .then(data => res.json(data))
     .catch(err => {
@@ -33,7 +35,7 @@ router.get('/classes', async (req, res) => {
 });
 
 // FIND ONE
-router.get('/classes/:id', async (req, res) => {
+router.get('/classes/:id', authToken, async (req, res) => {
   const id = req.params.id;
 
   await models.classes.findByPk(id)
@@ -52,7 +54,7 @@ router.get('/classes/:id', async (req, res) => {
 });
 
 // UPDATE
-router.put('/classes/:id', async (req, res) => {
+router.put('/classes/:id', authToken, async (req, res) => {
   await models.classes.update({
     name: req.body.name,
     teacherName: req.body.teacherName,
@@ -77,10 +79,10 @@ router.put('/classes/:id', async (req, res) => {
 });
 
 // DELETE ONE
-router.delete('/classes/:id', (req, res) => {
+router.delete('/classes/:id', authToken, async (req, res) => {
   const id = req.params.id;
 
-  models.classes.destroy({
+  await models.classes.destroy({
     where: { id: id }
   })
     .then(data => {

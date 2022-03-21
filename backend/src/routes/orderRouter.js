@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const models = require('../models');
 
+const authToken = require('../middlewares/authentication');
+
 // CREATE
-router.post('/orders', async (req, res) => {
+router.post('/orders', authToken, async (req, res) => {
   const { orderDate, productsIds, clientId, payed } = req.body;
 
   if(!orderDate || !productsIds || !clientId || payed === null) {
@@ -56,7 +58,7 @@ router.post('/orders', async (req, res) => {
 });
 
 // FIND ALL
-router.get('/orders', async (req, res) => {
+router.get('/orders', authToken, async (req, res) => {
   await models.orders.findAll({ include: [models.products, models.clients] })
     .then(data => res.send(data))
     .catch(err => {
@@ -66,7 +68,7 @@ router.get('/orders', async (req, res) => {
 });
 
 // FIND ONE
-router.get('/orders/:id', async (req, res) => {
+router.get('/orders/:id', authToken, async (req, res) => {
   const id = req.params.id;
 
   await models.orders.findByPk(id, { include: [models.products, models.clients] })
@@ -85,7 +87,7 @@ router.get('/orders/:id', async (req, res) => {
 });
 
 // UPDATE
-router.put('/orders/:id', async (req, res) => {
+router.put('/orders/:id', authToken, async (req, res) => {
   let productsInOrder = [];
 
   for(const prod of req.body.productsIds) {
@@ -144,10 +146,10 @@ router.put('/orders/:id', async (req, res) => {
 });
 
 // DELETE ONE
-router.delete('/orders/:id', (req, res) => {
+router.delete('/orders/:id', authToken, async (req, res) => {
   const id = req.params.id;
 
-  models.orders.destroy({
+  await models.orders.destroy({
     where: { id: id }
   })
     .then(data => {

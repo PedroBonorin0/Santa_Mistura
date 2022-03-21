@@ -1,8 +1,10 @@
 const router = require('express').Router();
 const models = require('../models');
 
+const authToken = require('../middlewares/authentication');
+
 // CREATE
-router.post('/clients', async (req, res) => {
+router.post('/clients', authToken, async (req, res) => {
   const { name, isStudent, classId } = req.body;
 
   if(!name || isStudent === null || !classId) {
@@ -38,7 +40,7 @@ router.post('/clients', async (req, res) => {
 });
 
 // FIND ALL
-router.get('/clients', async (req, res) => {
+router.get('/clients', authToken, async (req, res) => {
   await models.clients.findAll({ include: models.classes })
     .then(data => res.json(data))
     .catch(err => {
@@ -48,7 +50,7 @@ router.get('/clients', async (req, res) => {
 });
 
 // FIND ONE
-router.get('/clients/:id', async (req, res) => {
+router.get('/clients/:id', authToken, async (req, res) => {
   const id = req.params.id;
 
   await models.clients.findByPk(id, { include: models.classes })
@@ -67,7 +69,7 @@ router.get('/clients/:id', async (req, res) => {
 });
 
 // UPDATE
-router.put('/clients/:id', async (req, res) => {
+router.put('/clients/:id', authToken, async (req, res) => {
   await models.clients.update({
     name: req.body.name,
     isStudent: req.body.isStudent,
@@ -97,10 +99,10 @@ router.put('/clients/:id', async (req, res) => {
 });
 
 // DELETE ONE
-router.delete('/clients/:id', (req, res) => {
+router.delete('/clients/:id', authToken, async (req, res) => {
   const id = req.params.id;
 
-  models.clients.destroy({
+  await models.clients.destroy({
     where: { id: id }
   })
     .then(data => {
