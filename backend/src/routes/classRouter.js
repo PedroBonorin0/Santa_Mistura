@@ -4,7 +4,7 @@ const models = require('../models');
 const authToken = require('../middlewares/authentication');
 
 // CREATE
-router.post('/classes', authToken, async (req, res) => {
+router.post('/api/classes', authToken, async (req, res) => {
   const { name, teacherName } = req.body;
 
   if(!name || !teacherName) {
@@ -25,7 +25,7 @@ router.post('/classes', authToken, async (req, res) => {
 });
 
 // FIND ALL
-router.get('/classes', authToken, async (req, res) => {
+router.get('/api/classes', authToken, async (req, res) => {
   await models.classes.findAll()
     .then(data => res.json(data))
     .catch(err => {
@@ -35,7 +35,7 @@ router.get('/classes', authToken, async (req, res) => {
 });
 
 // FIND ONE
-router.get('/classes/:id', authToken, async (req, res) => {
+router.get('/api/classes/:id', authToken, async (req, res) => {
   const id = req.params.id;
 
   await models.classes.findByPk(id)
@@ -54,7 +54,7 @@ router.get('/classes/:id', authToken, async (req, res) => {
 });
 
 // UPDATE
-router.put('/classes/:id', authToken, async (req, res) => {
+router.put('/api/classes/:id', authToken, async (req, res) => {
   await models.classes.update({
     name: req.body.name,
     teacherName: req.body.teacherName,
@@ -79,7 +79,7 @@ router.put('/classes/:id', authToken, async (req, res) => {
 });
 
 // DELETE ONE
-router.delete('/classes/:id', authToken, async (req, res) => {
+router.delete('/api/classes/:id', authToken, async (req, res) => {
   const id = req.params.id;
 
   await models.classes.destroy({

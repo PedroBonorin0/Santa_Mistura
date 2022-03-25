@@ -12,7 +12,7 @@ const classRoutes = require('./routes/classRouter');
 const userRoutes = require('./routes/userRouter');
 
 var corsOptions = {
-  origin: 'http://localhost:8081'
+  origin: 'http://localhost:8080'
 };
 
 app.use(cors(corsOptions));
@@ -26,7 +26,6 @@ db.sequelize.sync();
 app.get('/', (req, res) => {
   res.send('Home');
 });
-
 
 app.use(productRoutes);
 app.use(clientRoutes);

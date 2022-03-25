@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 const userCount = require('../middlewares/userCount');
 
 // CREATE
-router.post('/users', userCount, async (req, res) => {
+router.post('/api/users', userCount, async (req, res) => {
   const { username, password } = req.body;
 
   if(!username || !password) {
@@ -32,7 +32,7 @@ router.post('/users', userCount, async (req, res) => {
 });
 
 // LOGIN
-router.post('/users/login', async(req, res) => {
+router.post('/api/users/login', async(req, res) => {
   let user;
 
   await models.users.findOne({
@@ -50,7 +50,7 @@ router.post('/users/login', async(req, res) => {
 
   try {
     if(await bcrypt.compare(req.body.password, user.password)) {
-      const accessToken = jwt.sign(userJson, process.env.ACCESS_TOKEN_SECRET);
+      const accessToken = jwt.sign(userJson, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1440m' });
       res.json(accessToken);
     }
     else
@@ -62,7 +62,7 @@ router.post('/users/login', async(req, res) => {
 });
 
 // FIND ALL
-router.get('/users', async (req, res) => {
+router.get('/api/users', async (req, res) => {
   await models.users.findAll()
     .then(data => res.json(data))
     .catch(err => res.send(err));

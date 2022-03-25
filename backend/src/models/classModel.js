@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
     teacherName: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    auxiliarTeacherName: {
+      type: DataTypes.STRING,
+      allowNull: true,
     }
   }, {
     timestamps: false

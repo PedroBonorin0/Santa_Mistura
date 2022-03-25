@@ -4,7 +4,7 @@ const models = require('../models');
 const authToken = require('../middlewares/authentication');
 
 // CREATE
-router.post('/products', authToken, async (req, res) => {
+router.post('/api/products', authToken, async (req, res) => {
   const { name, price } = req.body;
 
   if(!name || !price) {
@@ -25,7 +25,7 @@ router.post('/products', authToken, async (req, res) => {
 });
 
 // FIND ALL
-router.get('/products', authToken, async (req, res) => {
+router.get('/api/products', authToken, async (req, res) => {
   await models.products.findAll()
     .then(data => res.json(data))
     .catch(err => {
@@ -35,7 +35,7 @@ router.get('/products', authToken, async (req, res) => {
 });
 
 // FIND ONE
-router.get('/products/:id', authToken, async (req, res) => {
+router.get('/api/products/:id', authToken, async (req, res) => {
   const id = req.params.id;
 
   await models.products.findByPk(id)
@@ -54,7 +54,7 @@ router.get('/products/:id', authToken, async (req, res) => {
 });
 
 // UPDATE
-router.put('/products/:id', authToken, async (req, res) => {
+router.put('/api/products/:id', authToken, async (req, res) => {
   await models.products.update({
     name: req.body.name,
     price: req.body.price,
@@ -79,7 +79,7 @@ router.put('/products/:id', authToken, async (req, res) => {
 });
 
 // DELETE ONE
-router.delete('/products/:id', authToken, async (req, res) => {
+router.delete('/api/products/:id', authToken, async (req, res) => {
   const id = req.params.id;
 
   await models.products.destroy({
