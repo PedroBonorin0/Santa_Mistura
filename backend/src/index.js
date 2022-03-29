@@ -23,7 +23,7 @@ db.sequelize.sync();
 // db.sequelize.sync({ alter: true });
 // db.sequelize.sync({ force: true });
 
-app.get('/', (req, res) => {
+app.get('/api/', (req, res) => {
   res.send('Home');
 });
 

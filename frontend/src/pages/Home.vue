@@ -14,6 +14,9 @@
 </template>
 
 <script>
+export default {
+  name: 'Home',
+}
 
 </script>
 
@@ -36,8 +39,10 @@
     display: grid;
     margin: 4rem auto;
     max-width: 700px;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    justify-items: center;
   }
 
   .container-opcoes .option {
@@ -52,9 +57,14 @@
     justify-content: center;
     color: white;
     font-size: 20px;
+    transition: .3s;
+  }
+
+  .container-opcoes .option:hover {
+    background-color: #be4a33;
   }
 
   .container-opcoes .special {
-    grid-column: 1 / 3;
+    grid-column: 1/3
   }
 </style>

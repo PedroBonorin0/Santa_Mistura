@@ -1,8 +1,9 @@
 <template>
   <div id="geral">
+    <Message v-show="showErrorMessage" :message="errorMessage"/>
     <div class="card">
       <h1><img :src="logo" alt="Login"></h1>
-      <form :action="loginRoute" method="post">
+      <form @submit.prevent="handleSubmit">
         <div class="labelInput">
           <label for="usernameInput" name="username">Usuário: </label>
           <input type="text" placeholder="Digite o usuário" v-model="username">
@@ -14,8 +15,8 @@
         </div>
 
         <div class="buttons">
-          <button v-if="users.length == 0" @click="criaUser">Criar</button>
-          <button type="submit">Entrar</button>
+          <button v-if="users.length == 0" type="submit">Criar</button>
+          <button v-else type="submit">Entrar</button>
         </div>
       </form>
     </div>
@@ -24,14 +25,17 @@
 
 <script>
 import axios from 'axios';
+import Message from '../components/Message.vue';
 
 export default {
+  components: { Message },
   data() {
     return {
       logo: '/img/logo.png',
       users: [],
-      userRoute: 'http://localhost:3031/api/users',
-      loginRoute: 'http://localhost:3031/api/users/login',
+
+      showErrorMessage: false,
+      errorMessage: '',
 
       username: '',
       password:'',
@@ -44,12 +48,45 @@ export default {
 
   methods: {
     async getUsers() {
-      await axios.get(this.userRoute)
+      this.users = [];
+      await axios.get('users')
         .then(res => this.users = res.data)
         .catch(err => console.log(err))
     },
-    async criaUser() {
-      
+    handleSubmit() {
+      if(this.users.length)
+        this.handleLogin();
+      else
+        this.handleCreate();
+    },
+    async handleLogin() {
+      const response = await axios.post('users/login', {
+        username: this.username,
+        password: this.password,
+      });
+
+      if(response.data !== 'User not Found' &&
+        response.data !== 'Not allowed') {
+        localStorage.setItem('token', response.data.token);
+  
+        this.$router.push('/'); 
+      } else {
+        this.errorMessage = 'Usuário ou senha inválidos';
+        this.showErrorMessage = true;
+        setTimeout(() => {
+          this.showErrorMessage = false;
+          this.errorMessage = '';
+        }, 3000);
+      }
+
+    },
+    async handleCreate() {
+      await axios.post('users', {
+        username: this.username,
+        password: this.password,
+      })
+
+      window.location.reload();
     }
   },
 }
@@ -57,9 +94,11 @@ export default {
 
 <style scoped>
   #geral {
-    display: flex;
     height: 75vh;
-    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
   }
   
   .card {
@@ -70,7 +109,7 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    margin: auto;
+    margin: 0px auto;
   }
 
   .card img {
@@ -111,4 +150,5 @@ export default {
   .card button:hover {
     background-color: #dfcebe;
   }
+
 </style>

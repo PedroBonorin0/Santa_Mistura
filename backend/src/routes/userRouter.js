@@ -38,7 +38,7 @@ router.post('/api/users/login', async(req, res) => {
   await models.users.findOne({
     where: { username: req.body.username }
   }).then(data => {
-    return data? user = data : res.status(402).send('User not Found');
+    return data? user = data : res.send('User not Found');
   })
     .catch(err => res.send(err));
 
